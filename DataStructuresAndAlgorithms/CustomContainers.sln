@@ -7,8 +7,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "CustomContainers", "CustomC
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SortingAndSearching", "SortingAndSearching\SortingAndSearching.vcxproj", "{4C9DFA87-2E68-480A-B69A-4D888C01EEC6}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Game", "Game\Game.vcxproj", "{66876263-2FCE-47E8-B996-17E71E80FE9E}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64
@@ -33,14 +31,6 @@ Global
 		{4C9DFA87-2E68-480A-B69A-4D888C01EEC6}.Release|x64.Build.0 = Release|x64
 		{4C9DFA87-2E68-480A-B69A-4D888C01EEC6}.Release|x86.ActiveCfg = Release|Win32
 		{4C9DFA87-2E68-480A-B69A-4D888C01EEC6}.Release|x86.Build.0 = Release|Win32
-		{66876263-2FCE-47E8-B996-17E71E80FE9E}.Debug|x64.ActiveCfg = Debug|x64
-		{66876263-2FCE-47E8-B996-17E71E80FE9E}.Debug|x64.Build.0 = Debug|x64
-		{66876263-2FCE-47E8-B996-17E71E80FE9E}.Debug|x86.ActiveCfg = Debug|Win32
-		{66876263-2FCE-47E8-B996-17E71E80FE9E}.Debug|x86.Build.0 = Debug|Win32
-		{66876263-2FCE-47E8-B996-17E71E80FE9E}.Release|x64.ActiveCfg = Release|x64
-		{66876263-2FCE-47E8-B996-17E71E80FE9E}.Release|x64.Build.0 = Release|x64
-		{66876263-2FCE-47E8-B996-17E71E80FE9E}.Release|x86.ActiveCfg = Release|Win32
-		{66876263-2FCE-47E8-B996-17E71E80FE9E}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
