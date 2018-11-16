@@ -32,11 +32,71 @@ public:
 	node<T>* start;
 	node<T>* end;
 	void push_front(const T& data) {
-
+		if (start) {
+			node<T> n = new node<T>(data);
+			end->next = n;
+			end = n;
+		} else {
+			end = new node<T>(data);
+			start->next = end;
+		}
 	}
+
 	void pop_front() {
-
+		node<T>* n = start;
+		start = n->next;
+		delete n;
 	}
+
+	T& front() {
+		return start->data;
+	}
+
+	void remove(T& val) {
+		if (start) {
+			node<T>* n = start;
+			while (n->next) {
+				node<T>* temp = n;
+				n = n->next;
+				if (temp->data == val) {
+					delete temp;
+				}
+			}
+		}
+	}
+
+	bool empty() {
+		return !!start; //if there is no beginning than it's empty!
+	}
+
+	void clear() {
+		if (start) {
+			node<T>* n = start;
+			while (n->next) {
+				node<T>* temp = n;
+				n = n->next;
+				delete temp;
+			}
+		}
+	}
+
+	void resize(size_t newSize) {
+		node<T>* n = start;
+		for (int i = 0; i <= newSize; i++) {
+			if (n->next) {
+				n = n->next;
+			} else {
+				n->next = new node();
+				end = n->next;
+			}
+		}
+		while (n->next) {
+			node<T>* temp = n;
+			n = n->next;
+			delete temp;
+		}
+	}
+
 	void insert(linkedItterator<T> *i, T data) {
 		if (i->list != this) {
 			throw "attempted to use foreign itterator";
