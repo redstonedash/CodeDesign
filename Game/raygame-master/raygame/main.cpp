@@ -50,22 +50,22 @@ void PM_Accelerate(Player *p, Vector3 wishdir, float wishspeed, float accel) {
 }
   
 void updatePlayer(Player* p, Vector2 mouseDelta) {
-	p->direction.x += mouseDelta.x/50;
-	p->direction.y += mouseDelta.y/50;
+	p->direction.x += mouseDelta.x/40;
+	p->direction.y += mouseDelta.y/40;
 	p->camera.position.x -= p->velocity.x*GetFrameTime();
 	p->camera.position.y -= p->velocity.y*GetFrameTime();
 	p->camera.position.z -= p->velocity.z*GetFrameTime();
 	p->camera.target.x = p->camera.position.x + sin((p->direction.x / 360)*PI * 2);
-	p->camera.target.y = p->camera.position.y + sin((p->direction.y / 360)*PI * 2);
+	p->camera.target.y = p->camera.position.y + tan((p->direction.y / 360)*PI * 2);
 	p->camera.target.z = p->camera.position.z + cos((p->direction.x / 360)*PI * 2);
 }
 
 void acceleratePlayer(Player* p, Vector3 wishdir) { //TODO: make quakey
 	wishdir = { wishdir.x * cos((-p->direction.x / 360)*PI * 2) + wishdir.z * sin((p->direction.x / 360)*PI * 2), 0, wishdir.x * sin((-p->direction.x / 360)*PI * 2) + wishdir.z * cos((p->direction.x / 360)*PI * 2) };
-	PM_Accelerate(p, wishdir, 50, 3.2);
-	p->velocity.x *= 0.92f;
-	p->velocity.y *= 0.92f;
-	p->velocity.z *= 0.92f;
+	PM_Accelerate(p, wishdir, 75, 2.5f);
+	p->velocity.x *= 0.93f;
+	p->velocity.y *= 0.93f;
+	p->velocity.z *= 0.93f;
 }
 
 int main()
@@ -125,7 +125,7 @@ int main()
 
 		//DrawCube({ -0.0f, 0.0f, 5.0f }, 5.0f, 5.0f, 5.0f, RED);
 
-		DrawGrid(1000, 1.0f);        // Draw a grid
+		DrawGrid(4000, 10.0f);        // Draw a grid
 
 		EndMode3D();
 
