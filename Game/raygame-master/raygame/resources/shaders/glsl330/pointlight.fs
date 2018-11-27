@@ -11,9 +11,10 @@ layout (std140) uniform Materials {
 in Data {
     vec3 normal;
     vec3 eye;
-    vec3 lightDir;
+   
 } DataIn;
  
+uniform vec3 lightDir;
 void main() {
  
     vec4 spec = vec4(0.0);

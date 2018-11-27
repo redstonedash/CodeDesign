@@ -12,23 +12,21 @@
 #include "raylib.h"
 #include <iostream>
 #include <math.h>
+#include "PlayerMovement.h"
+#include <fstream>
+#include <string> 
 
-struct Player { //Player is handled diferently than every other object in the game
-	Camera camera = { 0 };
-	Vector3 velocity = { 0,0,0 };
-	Vector2 direction = { 0,0 };
-	Player() {
-		camera.position = { 0.0f, 15.0f, -50.0f };
-		camera.target = { 0.0f, 0.0f, 0.0f };
-		camera.up = { 0.0f, 1.0f, 0.0f };
-		camera.fovy = 45.0f;
-		camera.type = CAMERA_PERSPECTIVE;
-	}
-};
+//TODO: move to custom math class
 
 float DotProduct(Vector3 v1, Vector3 v2) {
 	return (v1.x*v2.x) + (v1.y*v2.y) + (v1.z*v2.z);
 }
+
+float distance(Vector3 v1, Vector3 v2) {
+	return sqrtf(pow(v1.x - v2.x, 2) + pow(v1.y - v2.y, 2) + pow(v1.z - v2.z, 2));
+}
+
+//TODO: move to player manager
 
 void PM_Accelerate(Player *p, Vector3 wishdir, float wishspeed, float accel) {
 	// q2 style
@@ -48,10 +46,10 @@ void PM_Accelerate(Player *p, Vector3 wishdir, float wishspeed, float accel) {
 	p->velocity.y += accelspeed * wishdir.y;
 	p->velocity.z += accelspeed * wishdir.z;
 }
-  
+
 void updatePlayer(Player* p, Vector2 mouseDelta) {
-	p->direction.x += mouseDelta.x/40;
-	p->direction.y += mouseDelta.y/40;
+	p->direction.x += mouseDelta.x/15;
+	p->direction.y += mouseDelta.y/15;
 	p->camera.position.x -= p->velocity.x*GetFrameTime();
 	p->camera.position.y -= p->velocity.y*GetFrameTime();
 	p->camera.position.z -= p->velocity.z*GetFrameTime();
@@ -60,24 +58,45 @@ void updatePlayer(Player* p, Vector2 mouseDelta) {
 	p->camera.target.z = p->camera.position.z + cos((p->direction.x / 360)*PI * 2);
 }
 
-void acceleratePlayer(Player* p, Vector3 wishdir) { //TODO: make quakey
+void acceleratePlayer(Player* p, Vector3 wishdir) {
 	wishdir = { wishdir.x * cos((-p->direction.x / 360)*PI * 2) + wishdir.z * sin((p->direction.x / 360)*PI * 2), 0, wishdir.x * sin((-p->direction.x / 360)*PI * 2) + wishdir.z * cos((p->direction.x / 360)*PI * 2) };
-	PM_Accelerate(p, wishdir, 75, 2.5f);
-	p->velocity.x *= 0.93f;
-	p->velocity.y *= 0.93f;
-	p->velocity.z *= 0.93f;
+	PM_Accelerate(p, wishdir, 100, 3.5f); //TODO: make these values constants
+	//p->velocity.y += GetFrameTime();
+	if (wishdir.x == 0 && wishdir.y == 0 && wishdir.z == 0) {
+		p->velocity.x *= 0.8f;
+		p->velocity.z *= 0.8f;
+		if (distance({ 0,0,0 }, p->velocity) < 0.3f) {
+			p->velocity = { 0,0,0 };
+		}
+	} else {
+		p->velocity.x *= 0.925f;
+		p->velocity.z *= 0.925f;
+	}
 }
+
 
 int main()
 {
 	// Initialization
 	//--------------------------------------------------------------------------------------
-	int screenWidth = 800;
-	int screenHeight = 450;
+	int screenWidth = 960;
+	int screenHeight = 640;
+	int lightCount = 2;
+	double time = 0;
 
 	SetConfigFlags(FLAG_VSYNC_HINT);
 
 	InitWindow(screenWidth, screenHeight, "raylib [core] example - basic window");
+
+	std::ifstream in("resources/shaders/glsl330/test.fs");
+	std::string contents((std::istreambuf_iterator<char>(in)),
+		std::istreambuf_iterator<char>());
+	std::cout << contents.c_str() << "\n\n";
+	contents.replace(contents.find("@n"),2,std::to_string(lightCount));
+	contents.replace(contents.find("@n"), 2, std::to_string(lightCount));
+
+	std::cout << contents.c_str();
+	
 
 	Model ramp = LoadModel("resources/models/cube.obj");
 	Shader shader = LoadShader("resources/shaders/glsl330/base.vs",
@@ -92,12 +111,27 @@ int main()
 	DisableCursor();
 	Vector2 mouseDelta = { 0,0 };
 	Vector2 mousePos = { 0,0 };
+	DisableCursor();
+	int lightLoc = GetShaderLocation(ramp.material.shader, "lightPos");
+	float lightPos[3] = { player.camera.position.x,player.camera.position.y,player.camera.position.z };
+	int cameraDirLoc = GetShaderLocation(ramp.material.shader, "cameraPos");
+	float cameraPosition[3] = { player.camera.target.x-player.camera.position.x,player.camera.target.y - player.camera.position.y,player.camera.target.z - player.camera.position.z };
+	
 	while (!WindowShouldClose())    // Detect window close button or ESC key
 	{
-		DisableCursor();
+		time += GetFrameTime();
+		cameraPosition[0] = player.camera.position.x ;
+		cameraPosition[1] = player.camera.position.y ;
+		cameraPosition[2] = player.camera.position.z ;
+		lightPos[0] = sin(time) * 20;
+		lightPos[1] = 15;
+		lightPos[2] = cos(time) * 20;
+		SetShaderValue(ramp.material.shader, lightLoc, lightPos, 3);
+		SetShaderValue(ramp.material.shader, cameraDirLoc, cameraPosition, 3);
 		mouseDelta.x = mousePos.x - GetMouseX();
 		mouseDelta.y = mousePos.y - GetMouseY();
 		mousePos = GetMousePosition();
+		//std::cout << player.camera.position.x << " " << player.camera.position.y << " " << player.camera.position.z << "\n";
 		//std::cout << mouseDelta.x << "\n";
 		RayHitInfo h = RayHitInfo();
 		// Update
@@ -117,15 +151,13 @@ int main()
 		//----------------------------------------------------------------------------------
 		BeginDrawing();
 
-		ClearBackground(RAYWHITE);
+		ClearBackground(WHITE);
 
 		BeginMode3D(player.camera);
 
-		DrawModel(ramp, { -0.0f, 0.0f, 5.0f }, 10.0f, WHITE);
+		DrawModel(ramp, {-0.0f, -0.0f, 2.0f }, 1.0f, WHITE);
 
-		//DrawCube({ -0.0f, 0.0f, 5.0f }, 5.0f, 5.0f, 5.0f, RED);
-
-		DrawGrid(4000, 10.0f);        // Draw a grid
+		//DrawGrid(4000, 10.0f);        // Draw a grid
 
 		EndMode3D();
 
