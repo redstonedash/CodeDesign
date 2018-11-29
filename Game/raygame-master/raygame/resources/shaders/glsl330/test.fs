@@ -9,7 +9,7 @@ in vec3 fragPosition;
 uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 uniform vec3 modelPos = vec3(0,0,0);
-uniform vec3 lightPos[@n] = float[@n](@i);
+uniform vec3 lightPos[9] = {vec3(0,15,0),vec3(50,15,0),vec3(-50,15,0),vec3(0,15,50),vec3(0,15,-50),vec3(50,15,50),vec3(-50,15,-50),vec3(-50,15,50),vec3(-50,15,-50)};
 uniform vec3 cameraPos;
 uniform vec2 resolution;
 uniform vec2 mouse;
@@ -108,29 +108,19 @@ void main()
     normalNoise = vec3(sin(noiser(position.xz/4)*3.1415)/6,cos(noiser(position.xz/4)*3.1415)/6,cos(noiser(position.xz/4)*3.1415)/6);
     vec3 reflectedNormal = normalize(reflect(position - cameraPos, normalize(fragNormal + normalNoise - vec3(modX,modZ,0) + (normalNoise/3))));
     float noise = noiser(position.xz/5);
-    /*//xy
-    vec2 xy =
-    vec2(organicNoise(position.xz-vec2(0.1f,0)/5),0.1f) -
-    vec2(organicNoise(position.xz+vec2(0.1f,0)/5),-0.1f);
-    xy = vec2(-xy.y, xy.x);
-    //zy
-	vec2 zy =
-    vec2(organicNoise(position.xz-vec2(0,0.1f)/5),0.1f) -
-    vec2(organicNoise(position.xz+vec2(0,0.1f)/5),-0.1f);
-    xy = vec2(-zy.y, zy.x);
-    normalNoise = normalize(vec3(xy.x,xy.y+zy.y,zy.x));*/
-    
-
-
     vec4 texelColor = texture(texture0, fragTexCoord)*colDiffuse*fragColor;
-    float lighDistance = distance(lightPos,position);
+    vec3 outColor = vec3(0,0,0);
     position.y += noise * 2.5;
     vec3 surfaceDir = reflectedNormal;
-    float lightDirectness = dot(normalize(lightPos - position),surfaceDir);
-    float lightFinalBrightness = lightDirectness/(distance(lightPos,position)/2);
-    float reflectiveColor = pow(1/(distance(lightPos, position+(normalize(surfaceDir)*(lighDistance)))*0.5),2);
-    //finalColor = vec4(position,1);
-    //finalColor = vec4(reflectiveColor,reflectiveColor,reflectiveColor,1);//lightFinalBrightness,lightFinalBrightness,lightFinalBrightness,1);
-    float finalBrightness = ((lightFinalBrightness*(cos(noiser(position.xz/3)*3.1415)))+(reflectiveColor*(1-cos(noiser(position.xz/3)*3.1415))));
-   	finalColor = vec4(finalBrightness*0.98,finalBrightness*1.2,finalBrightness*1.4,1+(fragPosition.y/5));
+    for(int i = 0; i < lightPos.length(); i++){
+        float lighDistance = distance(lightPos[i],position);
+        float lightDirectness = dot(normalize(lightPos[i] - position),surfaceDir);
+        float lightFinalBrightness = lightDirectness/(distance(lightPos[i],position)/2);
+        float reflectiveColor = pow(1/(distance(lightPos[i], position+(normalize(surfaceDir)*(lighDistance)))*0.5),2);
+        //finalColor = vec4(position,1);
+        //finalColor = vec4(reflectiveColor,reflectiveColor,reflectiveColor,1);//lightFinalBrightness,lightFinalBrightness,lightFinalBrightness,1);
+        float finalBrightness = ((lightFinalBrightness*(cos(noiser(position.xz/3)*3.1415)))+(reflectiveColor*(1-cos(noiser(position.xz/3)*3.1415))));
+        outColor += vec3(finalBrightness*0.98,finalBrightness*1.2,finalBrightness*1.4);
+    }
+   	finalColor = vec4(outColor,1+(fragPosition.y/5));
 }
