@@ -68,12 +68,11 @@ int main()
 		//----------------------------------------------------------------------------------
 		
 		Vector3 wishdir = { 
-			(IsKeyDown(KEY_D) - IsKeyDown(KEY_A)),
+			(IsKeyDown(KEY_A) - IsKeyDown(KEY_D)),
 			0,
-			(IsKeyDown(KEY_S) - IsKeyDown(KEY_W)),
+			(IsKeyDown(KEY_W) - IsKeyDown(KEY_S)),
 		};
 		acceleratePlayer(&player, wishdir);
-		updatePlayer(&player, mouseDelta);
 		// TODO: Update your variables here
 		//----------------------------------------------------------------------------------
 
@@ -85,10 +84,11 @@ int main()
 
 		BeginMode3D(player.camera);
 
+		updatePlayer(&player, mouseDelta, objectPool);
+
 		for (int i = 0; i < objectPool.size(); i++) {
 			if (objectPool.at(i).enabled) {
-				playerDetectColision(&player, &objectPool.at(i).plat);
-				objectPool.at(i).draw(player.camera);
+				//objectPool.at(i).draw(player.camera);
 			}
 		}
 
