@@ -90,41 +90,6 @@ bool playerDetectColision(Player* p, Model *m) {
 	Vector3 ClosestPoint;
 	float ClosestDistance = -1;
 	for (int i = 0; i < m->mesh.vertexCount*3; i++) {
-		if (i % 9 == 8) { // ind nearest point on tri
-			Vector3 point1 = { m->mesh.vertices[i - 2] ,m->mesh.vertices[i - 1] ,m->mesh.vertices[i] };
-			Vector3 point2 = { m->mesh.vertices[i - 5] ,m->mesh.vertices[i - 4] ,m->mesh.vertices[i - 3] };
-			Vector3 point3 = { m->mesh.vertices[i - 8] ,m->mesh.vertices[i - 7] ,m->mesh.vertices[i - 6] };
-			Vector3 avgPoint12 = (point1 + point2)/2;
-			Vector3 avgPoint13 = (point1 + point3)/2;
-			Vector3 avgPoint23 = (point2 + point3)/2;
-			//DrawLine3D(point1, point2, BLUE);
-			//DrawLine3D(point3, point2, BLUE);
-			//DrawLine3D(point1, point3, BLUE);
-			Ray ray;
-			ray.direction = normalize(CrossProduct(point3 - point1, point3 - point2));
-			ray.position = (point1 + point2 + point3) / 3;
-			//DrawLine3D(ray.position, ray.position + ray.direction*(5),GREEN);
-
-			Vector3 orgin = {5,-2,2.5};//p->camera.position;
-			Vector3 v = orgin - ray.position;
-			float scalarDist = DotProduct(v, normalize(ray.direction));
-			Vector3 projectedPoint = orgin - ray.direction * scalarDist;
-			float inBounds1 = DotProduct(normalize(ray.position - avgPoint12), (avgPoint12 - projectedPoint));
-			float inBounds2 = DotProduct(normalize(ray.position - avgPoint13), (avgPoint13 - projectedPoint));
-			float inBounds3 = DotProduct(normalize(ray.position - avgPoint23), (avgPoint23 - projectedPoint));
-			DrawLine3D(projectedPoint, ray.position, RED);
-			
-			if (true) {
-				std::cout << inBounds1 << " " << inBounds2 << " " << inBounds3 << "\n";
-				std::cout << i << "\n";
-				DrawLine3D(avgPoint12, avgPoint12 + (normalize(avgPoint12 - ray.position)*inBounds1), PURPLE);
-				DrawLine3D(avgPoint13, avgPoint13 + (normalize(avgPoint13 - ray.position)*inBounds2), PURPLE);
-				DrawLine3D(avgPoint23, avgPoint23 + (normalize(avgPoint23 - ray.position)*inBounds3), PURPLE);
-				DrawLine3D(point1, point2, BLUE);
-				DrawLine3D(point1, point3, BLUE);
-				DrawLine3D(point3, point2, BLUE);
-			}
-		}
 		if (i % 3 == 2) {
 			Ray ray;
 			ray.position = { m->mesh.vertices[i-2] ,m->mesh.vertices[i-1] ,m->mesh.vertices[i] };
@@ -141,9 +106,56 @@ bool playerDetectColision(Player* p, Model *m) {
 		Ray ray;
 		ray.position = { 0,0,0 };
 		ray.direction = { 0,100,0 };
+		if (i % 9 == 8) { // ind nearest point on tri
+			Vector3 point1 = { m->mesh.vertices[i - 2] ,m->mesh.vertices[i - 1] ,m->mesh.vertices[i] };
+			Vector3 point2 = { m->mesh.vertices[i - 5] ,m->mesh.vertices[i - 4] ,m->mesh.vertices[i - 3] };
+			Vector3 point3 = { m->mesh.vertices[i - 8] ,m->mesh.vertices[i - 7] ,m->mesh.vertices[i - 6] };
+			Vector3 avgPoint12 = (point1 + point2) / 2;
+			Vector3 avgPoint13 = (point1 + point3) / 2;
+			Vector3 avgPoint23 = (point2 + point3) / 2;
+			//DrawLine3D(point1, point2, BLUE);
+			//DrawLine3D(point3, point2, BLUE);
+			//DrawLine3D(point1, point3, BLUE);
+			Ray ray;
+			ray.direction = normalize(CrossProduct(point3 - point1, point3 - point2));
+			ray.position = (point1 + point2 + point3) / 3;
+			//DrawLine3D(ray.position, ray.position + ray.direction*(5),GREEN);
+
+			Vector3 orgin = { 5,-2,2.5 };//p->camera.position;
+			Vector3 v = orgin - ray.position;
+			float scalarDist = DotProduct(v, normalize(ray.direction));
+			Vector3 projectedPoint = orgin - ray.direction * scalarDist;
+			float inBounds1 = DotProduct(normalize(ray.position - avgPoint12), (ray.position - projectedPoint));
+			float inBounds2 = DotProduct(normalize(ray.position - avgPoint13), (ray.position - projectedPoint));
+			float inBounds3 = DotProduct(normalize(ray.position - avgPoint23), (ray.position - projectedPoint));
+			//DrawLine3D(projectedPoint, ray.position, RED);
+
+			if (true) {
+				std::cout << inBounds1 << " " << inBounds2 << " " << inBounds3 << "\n";
+				std::cout << i << "\n";
+				float scalar = DotProduct(normalize(point1 - point2), point1 - (p->camera.position));
+				if (scalar >= 0) {
+					DrawLine3D(point1, point1 + normalize(point2 - point1)*scalar, RED);
+				} else {
+					//DrawLine3D(point1, point1, BLUE);
+				}
+				scalar = DotProduct(normalize(point1 - point3), point2 - (p->camera.position));
+				if (scalar >= 0) {
+					DrawLine3D(point2, point2 + normalize(point3 - point1)*scalar, GREEN);
+				} else {
+					//DrawLine3D(point2, point1, BLUE);
+				}
+				scalar = DotProduct(normalize(point2 - point3), point3 - (p->camera.position));
+				if (scalar >= 0) {
+					DrawLine3D(point3, point3 + normalize(point2 - point3)*scalar, BLUE);
+				} else {
+					//DrawLine3D(point3, point3, BLUE);
+				}
+			}
+		}
 	}
 	if (!negativeEncountered) {
-		//DrawCircle3D({ 0,0,0 }, 10, { 1,0,0 }, 90, RED);
+		DrawCircle3D({ 0,0,0 }, 10, { 1,0,0 }, 90, RED);
 	}
 	/*
 	Ray ray;
