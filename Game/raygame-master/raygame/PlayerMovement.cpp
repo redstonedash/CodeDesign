@@ -23,31 +23,30 @@ Vector3 normalize(Vector3 v1) {
 	float length = distance({ 0,0,0 }, v1);
 	return { v1.x / length,v1.y / length,v1.z / length };
 }
-
 Vector3 operator-(Vector3 v1, Vector3 v2) {
 	return { v1.x - v2.x, v1.y-v2.y, v1.z-v2.z };
 }
-
 Vector3 operator+(Vector3 v1, Vector3 v2) {
 	return { v1.x + v2.x, v1.y + v2.y, v1.z + v2.z };
 }
-
 Vector3 operator*(Vector3 v1, int i1) {
 	return { v1.x * i1, v1.y * i1, v1.z * i1};
 }
-
 Vector3 operator/(Vector3 v1, int i1) {
 	return { v1.x / i1, v1.y / i1, v1.z / i1 };
 }
-
 Vector3 operator/(Vector3 v1, float f1) {
 	return { v1.x / f1, v1.y / f1, v1.z / f1 };
 }
-
 Vector3 operator-(Vector3 v1, float f1) {
 	return { v1.x - f1, v1.y - f1, v1.z - f1 };
 }
-
+Vector3 operator*(float f1, Vector3 v1) {
+	return { v1.x * f1, v1.y * f1, v1.z * f1 };
+}
+Vector3 operator+(float f1, Vector3 v1) {
+	return { v1.x + f1, v1.y + f1, v1.z + f1 };
+}
 Vector3 operator*(Vector3 v1, float f1) {
 	return { v1.x * f1, v1.y * f1, v1.z * f1 };
 }
@@ -55,7 +54,6 @@ Vector3 operator*(Vector3 v1, float f1) {
 
 void sourceAccelerate(Player *p, Vector3 wishdir, float wishspeed, float accel) {
 	// q2 style
-	int			i;
 	float		addspeed, accelspeed, currentspeed;
 
 	currentspeed = DotProduct(p->velocity, wishdir);
@@ -70,32 +68,156 @@ void sourceAccelerate(Player *p, Vector3 wishdir, float wishspeed, float accel) 
 	p->velocity.x += accelspeed * wishdir.x;
 	p->velocity.z += accelspeed * wishdir.z;
 }
+
+void sourceClipVelocity(Player* p, Vector3 normal, float overbounce) {
+	float backoff = DotProduct(p->velocity, normal);
+	if (backoff < 0) {
+		backoff *= overbounce;
+	} else {
+		backoff /= overbounce;
+	}
+	Vector3 change = normal * backoff;
+	p->velocity = p->velocity - change;
+
+}
+
 void updatePlayer(Player* p, Vector2 mouseDelta, std::vector<GameObject> collisionArray) {
 	p->direction.x += mouseDelta.x / 15;
 	p->direction.y += mouseDelta.y / 15;
+	if (IsKeyDown(KEY_SPACE) && p->Grounded == true) {
+		p->Grounded = false;
+		p->velocity.y += 75;
+	}
 	p->camera.position.x += p->velocity.x*GetFrameTime();
 	p->camera.position.y += p->velocity.y*GetFrameTime();
 	p->camera.position.z += p->velocity.z*GetFrameTime();
 	for (int i = 0; i < collisionArray.size(); i++) {
-		playerDetectColision(p, &collisionArray.at(i).plat);
+		if (playerDetectColision(p, &collisionArray.at(i))) {
+			p->camera.position.x += p->velocity.x*GetFrameTime();
+			p->camera.position.y += p->velocity.y*GetFrameTime();
+			p->camera.position.z += p->velocity.z*GetFrameTime();
+		}
 	}
 	p->camera.target.x = p->camera.position.x + sin((p->direction.x / 360)*PI * 2);
 	p->camera.target.y = p->camera.position.y + tan((p->direction.y / 360)*PI * 2);
 	p->camera.target.z = p->camera.position.z + cos((p->direction.x / 360)*PI * 2);
 }
 
+float clamp(float a, float b, float c) {
+	return (a<b) ? (b) : ((a>c) ? (c) : (a));
+}
 
-bool playerDetectColision(Player* p, Model *m) {
+
+
+Vector3 nearestPointOnTriangle(Vector3 point0, Vector3 point1, Vector3 point2, Vector3 target) {
+	Vector3 edge0 = point1 - point0;
+	Vector3 edge1 = point2 - point0;
+	Vector3 v0 = point0 - target;
+
+	float a = DotProduct(edge0, edge0);
+	float b = DotProduct(edge1, edge0);
+	float c = DotProduct(edge1, edge1);
+	float d = DotProduct(v0, edge0);
+	float e = DotProduct(v0, edge1);
+
+	float det = a * c - b * b;
+	float s = b * e - c * d;
+	float t = b * d - a * e;
+
+	if (s + t < det)
+	{
+		if (s < 0.0f)
+		{
+			if (t < 0.0f)
+			{
+				if (d < 0.0f)
+				{
+					s = clamp(-d / a, 0.0f, 1.0f);
+					t = 0.0f;
+				}
+				else
+				{
+					s = 0.0f;
+					t = clamp(-e / c, 0.0f, 1.0f);
+				}
+			}
+			else
+			{
+				s = 0.0f;
+				t = clamp(-e / c, 0.0f, 1.0f);
+			}
+		}
+		else if (t < 0.0f)
+		{
+			s = clamp(-d / a, 0.0f, 1.0f);
+			t = 0.0f;
+		}
+		else
+		{
+			float invDet = 1.0f / det;
+			s *= invDet;
+			t *= invDet;
+		}
+	}
+	else
+	{
+		if (s < 0.0f)
+		{
+			float tmp0 = b + d;
+			float tmp1 = c + e;
+			if (tmp1 > tmp0)
+			{
+				float numer = tmp1 - tmp0;
+				float denom = a - 2 * b + c;
+				s = clamp(numer / denom, 0.0f, 1.0f);
+				t = 1 - s;
+			}
+			else
+			{
+				t = clamp(-e / c, 0.0f, 1.0f);
+				s = 0.0f;
+			}
+		}
+		else if (t < 0.0f)
+		{
+			if (a + d > b + e)
+			{
+				float numer = c + e - b - d;
+				float denom = a - 2 * b + c;
+				s = clamp(numer / denom, 0.0f, 1.0f);
+				t = 1 - s;
+			}
+			else
+			{
+				s = clamp(-e / c, 0.0f, 1.0f);
+				t = 0.0f;
+			}
+		}
+		else
+		{
+			float numer = c + e - b - d;
+			float denom = a - 2 * b + c;
+			s = clamp(numer / denom, 0.0f, 1.0f);
+			t = 1.0f - s;
+		}
+	}
+	return point0 + s * edge0 + t * edge1;
+}
+
+bool playerDetectColision(Player* p, GameObject *m) {
 	bool negativeEncountered = false;
 	Vector3 ClosestPoint;
+	Vector3 ClosestPointNormal;
+	Vector3 offset = { 0,-15,0 };
+	offset = offset;
 	float ClosestDistance = -1;
-	for (int i = 0; i < m->mesh.vertexCount*3; i++) {
+	for (int i = 0; i < m->plat.mesh.vertexCount*3; i++) {
 		if (i % 3 == 2) {
 			Ray ray;
-			ray.position = { m->mesh.vertices[i-2] ,m->mesh.vertices[i-1] ,m->mesh.vertices[i] };
-			ray.direction = {- m->mesh.normals[i - 2] ,- m->mesh.normals[i - 1] ,- m->mesh.normals[i] };
+			ray.position = { m->plat.mesh.vertices[i-2],m->plat.mesh.vertices[i-1],m->plat.mesh.vertices[i]};
+			ray.direction = {-m->plat.mesh.normals[i - 2],-m->plat.mesh.normals[i - 1],-m->plat.mesh.normals[i]};
 
-			if (DotProduct(normalize(p->camera.position - ray.position), ray.direction) >= 0) {
+			if (DotProduct(normalize(p->camera.position + offset - ray.position), ray.direction) >= 0) {
 				//DrawLine3D(ray.position, ray.position + ray.direction*(5), { 255,0,0,255 });
 			}
 			else {
@@ -106,56 +228,37 @@ bool playerDetectColision(Player* p, Model *m) {
 		Ray ray;
 		ray.position = { 0,0,0 };
 		ray.direction = { 0,100,0 };
-		if (i % 9 == 8) { // ind nearest point on tri
-			Vector3 point1 = { m->mesh.vertices[i - 2] ,m->mesh.vertices[i - 1] ,m->mesh.vertices[i] };
-			Vector3 point2 = { m->mesh.vertices[i - 5] ,m->mesh.vertices[i - 4] ,m->mesh.vertices[i - 3] };
-			Vector3 point3 = { m->mesh.vertices[i - 8] ,m->mesh.vertices[i - 7] ,m->mesh.vertices[i - 6] };
-			Vector3 avgPoint12 = (point1 + point2) / 2;
-			Vector3 avgPoint13 = (point1 + point3) / 2;
-			Vector3 avgPoint23 = (point2 + point3) / 2;
+		if (i % 9 == 8) { //this is called once we are on the last point of a triangle
+			Vector3 point0 = { m->plat.mesh.vertices[i - 2] ,m->plat.mesh.vertices[i - 1] ,m->plat.mesh.vertices[i]    };
+			Vector3 point1 = { m->plat.mesh.vertices[i - 5] ,m->plat.mesh.vertices[i - 4] ,m->plat.mesh.vertices[i - 3]};
+			Vector3 point2 = { m->plat.mesh.vertices[i - 8] ,m->plat.mesh.vertices[i - 7] ,m->plat.mesh.vertices[i - 6]};
+			
+			//DrawLine3D(point0, point1, BLUE);
 			//DrawLine3D(point1, point2, BLUE);
-			//DrawLine3D(point3, point2, BLUE);
-			//DrawLine3D(point1, point3, BLUE);
+			//DrawLine3D(point0, point2, BLUE);
+
+			Vector3 nearestPointOnTri = nearestPointOnTriangle(point0, point1, point2, p->camera.position+offset);
 			Ray ray;
-			ray.direction = normalize(CrossProduct(point3 - point1, point3 - point2));
-			ray.position = (point1 + point2 + point3) / 3;
-			//DrawLine3D(ray.position, ray.position + ray.direction*(5),GREEN);
-
-			Vector3 orgin = { 5,-2,2.5 };//p->camera.position;
-			Vector3 v = orgin - ray.position;
-			float scalarDist = DotProduct(v, normalize(ray.direction));
-			Vector3 projectedPoint = orgin - ray.direction * scalarDist;
-			float inBounds1 = DotProduct(normalize(ray.position - avgPoint12), (ray.position - projectedPoint));
-			float inBounds2 = DotProduct(normalize(ray.position - avgPoint13), (ray.position - projectedPoint));
-			float inBounds3 = DotProduct(normalize(ray.position - avgPoint23), (ray.position - projectedPoint));
-			//DrawLine3D(projectedPoint, ray.position, RED);
-
-			if (true) {
-				std::cout << inBounds1 << " " << inBounds2 << " " << inBounds3 << "\n";
-				std::cout << i << "\n";
-				float scalar = DotProduct(normalize(point1 - point2), point1 - (p->camera.position));
-				if (scalar >= 0) {
-					DrawLine3D(point1, point1 + normalize(point2 - point1)*scalar, RED);
-				} else {
-					//DrawLine3D(point1, point1, BLUE);
-				}
-				scalar = DotProduct(normalize(point1 - point3), point2 - (p->camera.position));
-				if (scalar >= 0) {
-					DrawLine3D(point2, point2 + normalize(point3 - point1)*scalar, GREEN);
-				} else {
-					//DrawLine3D(point2, point1, BLUE);
-				}
-				scalar = DotProduct(normalize(point2 - point3), point3 - (p->camera.position));
-				if (scalar >= 0) {
-					DrawLine3D(point3, point3 + normalize(point2 - point3)*scalar, BLUE);
-				} else {
-					//DrawLine3D(point3, point3, BLUE);
-				}
+			ray.position = nearestPointOnTri;
+			ray.direction = normalize(CrossProduct(point2 - point0, point2 - point1));
+			//DrawCircle3D(ray.position, 0.5, { 0,1,0 }, 0, GREEN);
+			if (ClosestDistance == -1 || ClosestDistance > distance(nearestPointOnTri, p->camera.position+offset)) {
+				ClosestDistance = distance(nearestPointOnTri, p->camera.position + offset);
+				ClosestPoint = nearestPointOnTri;
+				ClosestPointNormal = ray.direction;
 			}
 		}
 	}
 	if (!negativeEncountered) {
-		DrawCircle3D({ 0,0,0 }, 10, { 1,0,0 }, 90, RED);
+		if (DotProduct({ 0,-1,0 }, ClosestPointNormal) > 0.5) {
+			p->Grounded = true;
+		} else {
+			p->Grounded = false;
+		}
+		//std::cout << DotProduct({ 0,1,0 }, ClosestPointNormal) << "\n";
+		p->camera.position = ClosestPoint-offset;
+		sourceClipVelocity(p, ClosestPointNormal, 1);
+		//DrawCircle3D(ClosestPoint, 1, { 1,0,0 }, 90, RED);
 	}
 	/*
 	Ray ray;
@@ -177,20 +280,28 @@ void acceleratePlayer(Player* p, Vector3 wishdir) {
 	wishdir = { (float) (wishdir.x * cos((-p->direction.x / 360)*PI * 2) + wishdir.z * sin((p->direction.x / 360)*PI * 2)),
 	0,
 	(float) (wishdir.x * sin((-p->direction.x / 360)*PI * 2) + wishdir.z * cos((p->direction.x / 360)*PI * 2) )};
-	sourceAccelerate(p, wishdir, 100, 3.5f); //TODO: make these values constants
+	if (p->Grounded) {
+		sourceAccelerate(p, wishdir, 150, 3.5f); //TODO: make these values constants
+	} else {
+		sourceAccelerate(p, wishdir, 80, 5.0f); //TODO: make these values constants
+	}
 										  //p->velocity.y += GetFrameTime();
 	if (wishdir.x == 0 && wishdir.y == 0 && wishdir.z == 0) {
-		p->velocity.x *= 0.8f;
-		p->velocity.z *= 0.8f;
-		if (distance({ 0,0,0 }, { p->velocity.x,0,p->velocity.z }) < 0.3f) {
-			p->velocity = { 0,p->velocity.y,0 };
+		if (p->Grounded) {
+			p->velocity.x *= 0.8f;
+			p->velocity.z *= 0.8f;
+			if (distance({ 0,0,0 }, { p->velocity.x,0,p->velocity.z }) < 0.3f) {
+				p->velocity = { 0,p->velocity.y,0 };
+			}
 		}
 	}
 	else {
-		p->velocity.x *= 0.925f;
-		p->velocity.z *= 0.925f;
+		if (p->Grounded) {
+			p->velocity.x *= 0.925f;
+			p->velocity.z *= 0.925f;
+		}
 	}
-	//p->velocity.y -= GetFrameTime()*1.0f;
+	p->velocity.y -= GetFrameTime()*130.0f;
 }
 void applyFriction(Player* p) {
 

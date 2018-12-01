@@ -52,7 +52,28 @@ int main()
 	
 	std::vector<GameObject> objectPool = std::vector<GameObject>();
 
-	objectPool.push_back(GameObject({ 0, 0, 0 }));
+	objectPool.push_back(GameObject("resources/models/MAPPART_01.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_02.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_03.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_04.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_05.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_06.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_07.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_08.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_09.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_10.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_11.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_12.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_13.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_14.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_15.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_16.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_17.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_18.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_19.obj"));
+	objectPool.push_back(GameObject("resources/models/MAPPART_20.obj"));
+
+
 
 	while (!WindowShouldClose())    // Detect window close button or ESC key
 	{
@@ -88,14 +109,16 @@ int main()
 
 		for (int i = 0; i < objectPool.size(); i++) {
 			if (objectPool.at(i).enabled) {
-				//objectPool.at(i).draw(player.camera);
+				objectPool.at(i).draw(player.camera);
 			}
 		}
 
 
-		//DrawGrid(4000, 10.0f);        // Draw a grid
+		//DrawGrid(3000, 10.0f);        // Draw a grid
 
 		EndMode3D();
+
+		DrawFPS(0, 0);
 
 		EndDrawing();
 		//----------------------------------------------------------------------------------

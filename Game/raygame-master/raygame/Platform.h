@@ -1,28 +1,27 @@
 #pragma once
 #include "raylib.h"
+#pragma warning(disable:4996)
 struct GameObject {
-	Model plat = LoadModel("resources/models/cube.obj");
+	Model plat;
 	Shader shader;
 	int cameraLoc;
-	Vector3 position;
 	bool enabled = false;
 	float cameraPosition[3] = { 0,0,0 };
 	GameObject() {
 
 	}
-	GameObject(Vector3 Position) {
+	GameObject(const char* model) {
 		shader = LoadShader("resources/shaders/glsl330/base.vs",
 			"resources/shaders/glsl330/test.fs");
+		plat = LoadModel(model);
 		plat.material.shader = shader;
-		position = Position;
 		enabled = true;
 		cameraLoc = GetShaderLocation(plat.material.shader, "cameraPos");
 	}
-	void enablePlatform(Vector3 Position) {
+	void enablePlatform() {
 		shader = LoadShader("resources/shaders/glsl330/base.vs",
 			"resources/shaders/glsl330/test.fs");
 		plat.material.shader = shader;
-		position = Position;
 		enabled = true;
 		cameraLoc = GetShaderLocation(plat.material.shader, "cameraPos");
 	}
@@ -31,7 +30,7 @@ struct GameObject {
 		cameraPosition[1] = c.position.y;
 		cameraPosition[2] = c.position.z;
 		SetShaderValue(plat.material.shader, cameraLoc, cameraPosition, 3);
-		DrawModel(plat, position, 1, WHITE);
+		DrawModel(plat, {0,0,0}, 1, WHITE);
 
 	}
 };
