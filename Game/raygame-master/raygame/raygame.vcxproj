@@ -135,7 +135,7 @@
     <ClCompile Include="PlayerMovement.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Platform.h" />
+    <ClInclude Include="GameObject.h" />
     <ClInclude Include="PlayerMovement.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

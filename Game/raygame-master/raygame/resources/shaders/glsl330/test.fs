@@ -10,7 +10,7 @@ uniform sampler2D texture0;
 uniform vec4 colDiffuse;
 uniform vec3 modelPos = vec3(0,0,0);
 uniform vec3 lightPos[9*18] = {
-    vec3(0,15,0),
+vec3(0,15,0),
 vec3(50,15,0),
 vec3(-50,15,0),
 vec3(0,15,50),
@@ -180,36 +180,11 @@ uniform float time;
 // Output fragment color
 out vec4 finalColor;
 
-// NOTE: Add here your custom variables
-
 float random (vec2 st) {
     return fract(sin(dot(st.xy,
                          vec2(62.01019,12.9898)))*
         43424.5453123);
 }
-
-float organicNoise (vec2 st) {
-    vec2 i = floor(st);
-    vec2 f = fract(st);
-
-    // Four corners in 2D of a tile
-    float a = random(i);
-    float b = random(i + vec2(1.0, 0.0));
-    float c = random(i + vec2(0.0, 1.0));
-    float d = random(i + vec2(1.0, 1.0));
-
-    // Smooth Interpolation
-
-    // Cubic Hermine Curve.  Same as SmoothStep()
-    vec2 u = f*f*(3.0-2.0*f);
-    // u = smoothstep(0.,1.,f);
-
-    // Mix 4 coorners percentages
-    return mix(a, b, u.x) +
-            (c - a)* u.y * (1.0 - u.x) +
-            (d - b) * u.x * u.y;
-}
-
 
 float hash(vec2 p)  // replace this by something better
 {
@@ -275,15 +250,20 @@ void main()
     vec3 outColor = vec3(0,0,0);
     position.y += noise * 2.5;
     vec3 surfaceDir = reflectedNormal;
-    for(int i = 0; i < lightPos.length(); i++){
+    for(int i = 0; i < lightPos.length(); i++)
+    {
         float lighDistance = distance(lightPos[i],position);
-        float lightDirectness = dot(normalize(lightPos[i] - position),surfaceDir);
-        float lightFinalBrightness = lightDirectness/(distance(lightPos[i],position)/0.5);
-        float reflectiveColor = pow(1/(distance(lightPos[i], position+(normalize(surfaceDir)*(lighDistance)))*0.5),2);
-        //finalColor = vec4(position,1);
-        //finalColor = vec4(reflectiveColor,reflectiveColor,reflectiveColor,1);//lightFinalBrightness,lightFinalBrightness,lightFinalBrightness,1);
-        float finalBrightness = ((lightFinalBrightness*(cos(noiser(position.xz/3)*3.1415)))+(reflectiveColor*(1-cos(noiser(position.xz/3)*3.1415))));
-        outColor += vec3(finalBrightness*0.98,finalBrightness*1.2,finalBrightness*1.4);
+        if(lighDistance < 150) //for performance
+        {
+            float fadeWithDist = 1- (lighDistance-100)/50;
+            float lightDirectness = dot(normalize(lightPos[i] - position),surfaceDir);
+            float lightFinalBrightness = lightDirectness/(distance(lightPos[i],position)/0.5);
+            float reflectiveColor = pow(1/(distance(lightPos[i], position+(normalize(surfaceDir)*(lighDistance)))*0.5),2);
+            //finalColor = vec4(position,1);
+            //finalColor = vec4(reflectiveColor,reflectiveColor,reflectiveColor,1);//lightFinalBrightness,lightFinalBrightness,lightFinalBrightness,1);
+            float finalBrightness = ((lightFinalBrightness*(cos(noiser(position.xz/3)*3.1415)))+(reflectiveColor*(1-cos(noiser(position.xz/3)*3.1415))));
+            outColor += vec3(finalBrightness*0.98,finalBrightness*1.2,finalBrightness*1.4)*fadeWithDist;
+        }
     }
-   	finalColor = vec4(outColor,1+(fragPosition.y/5));
+    finalColor = vec4(outColor,1+(fragPosition.y/5));
 }
