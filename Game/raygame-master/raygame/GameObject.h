@@ -28,6 +28,8 @@ struct GameObject {
 
 	void unload() {
 		UnloadModel(mesh);
+		enabled = false;
+		goal = false;
 	}
 
 	void disable() {

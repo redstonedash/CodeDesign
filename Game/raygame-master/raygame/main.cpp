@@ -69,11 +69,12 @@ int main()
 	while (!WindowShouldClose())    // Detect window close button or ESC key
 	{
 		if (player.finished) {
-			mainMenu();
 			player.finished = false;
 			for (int i = 0; i < MAX_GAME_OBJECTS; i++) {
-				objectPool.at(i).unload();
+				if(objectPool.at(i).enabled)
+					objectPool.at(i).unload();
 			}
+			mainMenu();
 		}
 		time += GetFrameTime();
 		
@@ -202,12 +203,6 @@ int mainMenu() {
 	while (!WindowShouldClose())    // Detect window close button or ESC key
 	{
 		time[0] += GetFrameTime()*4;
-		BeginDrawing();
-		ClearBackground(WHITE);
-		BeginMode3D(menuCam);
-		DrawModel(leftButton, { -100,-2, -5.5 }, 1, WHITE);
-		DrawModel(rightButton, { -100,-2, 5.5 }, 1, WHITE);
-		SetShaderValue(menuPlane.material.shader, timeLoc, time, 1);
 		if (GetMousePosition().x>150 && GetMousePosition().x<420 && GetMousePosition().y>350 && GetMousePosition().y<430) {
 			left[0] = 1;
 			if (IsMouseButtonPressed(MOUSE_LEFT_BUTTON)) {
@@ -215,7 +210,8 @@ int mainMenu() {
 				LoadLevelOne();
 				break;
 			}
-		} else {
+		}
+		else {
 			left[0] = 0;
 		}
 		SetShaderValue(leftButton.material.shader, leftLoc, left, 1);
@@ -226,9 +222,16 @@ int mainMenu() {
 				LoadLevelTwo();
 				break;
 			}
-		} else {
+		}
+		else {
 			right[0] = 0;
 		}
+		BeginDrawing();
+		ClearBackground(WHITE);
+		BeginMode3D(menuCam);
+		DrawModel(leftButton, { -100,-2, -5.5 }, 1, WHITE);
+		DrawModel(rightButton, { -100,-2, 5.5 }, 1, WHITE);
+		SetShaderValue(menuPlane.material.shader, timeLoc, time, 1);
 		SetShaderValue(rightButton.material.shader, rightLoc, right, 1);
 		DrawModel(menuPlane, { 0,-5, 0 }, 1, WHITE);
 		EndMode3D();
