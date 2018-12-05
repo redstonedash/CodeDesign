@@ -1,0 +1,36 @@
+﻿
+# Please enter the commit message for your changes. Lines starting
+# with '#' will be ignored, and an empty message aborts the commit.
+#
+# On branch master
+# Your branch is up-to-date with 'origin/master'.
+#
+# Changes to be committed:
+#	modified:   DataStructuresAndAlgorithms/.vs/CustomContainers/v15/.suo
+#	modified:   DataStructuresAndAlgorithms/.vs/CustomContainers/v15/Browse.VC.db
+#
+# Changes not staged for commit:
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/vector.h
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/CustomContainers.log
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/CustomContainers.tlog/CL.command.1.tlog
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/CustomContainers.tlog/CL.read.1.tlog
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/CustomContainers.tlog/CL.write.1.tlog
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/CustomContainers.tlog/CustomContainers.lastbuildstate
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/CustomContainers.tlog/link.command.1.tlog
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/CustomContainers.tlog/link.read.1.tlog
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/CustomContainers.tlog/link.write.1.tlog
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/main.obj
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/vc141.idb
+#	modified:   DataStructuresAndAlgorithms/CustomContainers/x64/Debug/vc141.pdb
+#	modified:   DataStructuresAndAlgorithms/x64/Debug/CustomContainers.ilk
+#	modified:   DataStructuresAndAlgorithms/x64/Debug/CustomContainers.pdb
+#	modified:   Game/raygame-master/raygame/GameObject.h
+#	modified:   Game/raygame-master/raygame/main.cpp
+#
+# Untracked files:
+#	DataStructuresAndAlgorithms/.vs/CustomContainers/v15/Browse.VC.opendb
+#	DataStructuresAndAlgorithms/.vs/CustomContainers/v15/Solution.VC.db-shm
+#	DataStructuresAndAlgorithms/.vs/CustomContainers/v15/Solution.VC.db-wal
+#	DataStructuresAndAlgorithms/.vs/CustomContainers/v15/ipch/AutoPCH/ed195c91f912920f/
+#
+

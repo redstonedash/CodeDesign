@@ -71,6 +71,9 @@ int main()
 		if (player.finished) {
 			mainMenu();
 			player.finished = false;
+			for (int i = 0; i < MAX_GAME_OBJECTS; i++) {
+				objectPool.at(i).unload();
+			}
 		}
 		time += GetFrameTime();
 		

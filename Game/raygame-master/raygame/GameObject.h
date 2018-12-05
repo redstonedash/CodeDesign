@@ -3,7 +3,6 @@
 #pragma warning(disable:4996)
 struct GameObject {
 	Model mesh;
-	Shader shader;
 	int cameraLoc;
 	bool enabled = false;
 	bool goal = false;
@@ -26,6 +25,11 @@ struct GameObject {
 		DrawModel(mesh, {0,0,0}, 1, WHITE);
 
 	}
+
+	void unload() {
+		UnloadModel(mesh);
+	}
+
 	void disable() {
 		enabled = false;
 		goal = false;
