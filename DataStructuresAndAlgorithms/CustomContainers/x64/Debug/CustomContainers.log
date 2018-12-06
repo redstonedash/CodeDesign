@@ -1,2 +1,19 @@
 ﻿  main.cpp
+c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\vector.h(36): warning C4521: 'Vector<const char *>': multiple copy constructors specified
+  c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\main.cpp(4): note: see reference to class template instantiation 'Vector<const char *>' being compiled
+c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\vector.h(90): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
+  c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\vector.h(88): note: while compiling class template member function 'void Vector<const char *>::push_back(const T &)'
+          with
+          [
+              T=const char *
+          ]
+  c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\main.cpp(5): note: see reference to function template instantiation 'void Vector<const char *>::push_back(const T &)' being compiled
+          with
+          [
+              T=const char *
+          ]
+  c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\main.cpp(4): note: see reference to class template instantiation 'Vector<const char *>' being compiled
+c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\vector.h(131): warning C4267: 'argument': conversion from 'size_t' to 'const int', possible loss of data
+  c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\vector.h(129): note: while compiling class template member function 'void Vector<const char *>::resize(const size_t)'
+  c:\users\s189064\desktop\ds&a_assesment\data-structures-and-algorithms-assesment\datastructuresandalgorithms\customcontainers\main.cpp(10): note: see reference to function template instantiation 'void Vector<const char *>::resize(const size_t)' being compiled
   CustomContainers.vcxproj -> C:\Users\s189064\Desktop\Ds&a_Assesment\data-structures-and-algorithms-assesment\DataStructuresAndAlgorithms\x64\Debug\CustomContainers.exe

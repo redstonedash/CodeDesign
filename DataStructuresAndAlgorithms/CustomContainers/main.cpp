@@ -1,12 +1,16 @@
 #include <iostream>
 #include "vector.h"
-#include "stack.h"
-#include "queue.h"
-#include "linkedlist.h"
 int main() {
-	linkedList<const char*> l = linkedList<const char*>();
-	linkedItterator<const char*> i = linkedItterator<const char*>(&l);
-	l.insert(&i,"alpha");
-	std::cout << *i;
+	Vector<const char*>* test = &(Vector<const char*>());
+	test->push_back("alpha");
+	test->clear();
+	test->empty();
+	test->pop_back();
+	test->reserve(7);
+	test->resize(77);
+	test->size();
+	test->capacity();
+	test->push_back("alpha");
+	std::cout << test->at(77);
 	return 0;
 }
