@@ -74,7 +74,7 @@ int main()
 				if(objectPool.at(i).enabled)
 					objectPool.at(i).unload();
 			}
-			mainMenu();
+			mainMenu(); //this function dosn't just display a main menu, it also loads levels.
 		}
 		time += GetFrameTime();
 		
@@ -115,6 +115,13 @@ int main()
 		EndDrawing();
 		//----------------------------------------------------------------------------------
 	}
+
+	for (int i = 0; i < MAX_GAME_OBJECTS; i++) {
+		if (objectPool.at(i).enabled)
+			objectPool.at(i).unload();
+	}
+
+	objectPool.clear();
 
 	// De-Initialization
 	//--------------------------------------------------------------------------------------   
@@ -238,5 +245,8 @@ int mainMenu() {
 		DrawText(std::to_string(GetMousePosition().x).c_str(), 100, 100, 100, BLACK);
 		EndDrawing();
 	}
+	UnloadModel(leftButton);
+	UnloadModel(rightButton);
+	UnloadModel(menuPlane);
 	return 0;
 }

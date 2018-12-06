@@ -22,11 +22,11 @@ public:
 
 	void clear();
 
-	void reserve();
+	void reserve(int i);
 
 	bool empty();
 
-	void resize();
+	void resize(size_t);
 	
 	size_t size();
 	size_t capacity();
@@ -56,9 +56,14 @@ Vector<T>::Vector(Vector & otherVector){
 }
 
 template<typename T>
-Vector & Vector<T>::operator=(Vector & Vector)
-{
-	
+Vector<T> & Vector<T>::operator=(Vector<T> & Vector){
+	reserve(vec.capacity());
+	arraySize = Vector.arraySize;
+
+	for (int i = 0; i < Vector.arraySize; i++) {
+		baseArray[i] = Vector.baseArray[i];
+	}
+	return *this;
 }
 
 
@@ -70,41 +75,49 @@ T & Vector<T>::operator[](size_t index){
 template<typename T>
 void Vector<T>::push_back(T & value){
 	if (size + 1 <= capacity) {
-		resize(capacity * 2);
+		reserve(capacity * 2);
 	}
 	baseArray[size] = value;
-	size++;
+	arraySize++;
 }
 
 template<typename T>
 T & Vector<T>::at(size_t i){
-	
+	baseArray[i];
 }
 
 template<typename T>
-void Vector<T>::pop_back()
-{
+void Vector<T>::pop_back(){
+	arraySize--;
 }
 
 template<typename T>
-void Vector<T>::clear()
-{
+void Vector<T>::clear(){
+	arraySize = 0;
 }
 
 template<typename T>
-void Vector<T>::reserve()
-{
+void Vector<T>::reserve(int i){
+	T temp[i] = new T[i];
+	for (int i = 0; i < arraySize; i++) {
+		temp[i] = baseArray[i];
+	}
+	baseArray = temp;
 }
 
 template<typename T>
-bool Vector<T>::empty()
-{
-	return false;
+bool Vector<T>::empty(){
+	return arraySize;
 }
 
 template<typename T>
-void Vector<T>::resize()
+void Vector<T>::resize(size_t i)
 {
+	if (size > capacity) {
+		reserve(size * 2);
+	} else {
+
+	}
 }
 
 template<typename T>

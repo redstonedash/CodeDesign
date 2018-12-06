@@ -8,6 +8,5 @@ int main() {
 	linkedItterator<const char*> i = linkedItterator<const char*>(&l);
 	l.insert(&i,"alpha");
 	std::cout << *i;
-	
 	return 0;
 }

@@ -231,11 +231,11 @@ bool playerDetectColision(Player* p, GameObject *m) {
 	if (!negativeEncountered) {
 		if (DotProduct({ 0,-1,0 }, ClosestPointNormal) > 0.9) {
 			p->Grounded = true;
-			if (m->goal) {
-				p->finished = true;
-			}
 		} else {
 			p->Grounded = false;
+		}
+		if (m->goal) {
+			p->finished = true;
 		}
 		//std::cout << DotProduct({ 0,1,0 }, ClosestPointNormal) << "\n";
 		p->camera.position = ClosestPoint-offset;
