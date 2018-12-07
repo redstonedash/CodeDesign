@@ -20,14 +20,7 @@ public:
 		end = NULL;
 	}
 	~linkedList() {
-		if (start) {
-			node<T>* n = start;
-			while (n->next) {
-				node<T>* temp = n;
-				n = n->next;
-				delete temp;
-			}
-		}
+		clear();
 	}
 	node<T>* start;
 	node<T>* end;
@@ -59,6 +52,16 @@ public:
 				node<T>* temp = n;
 				n = n->next;
 				if (temp->data == val) {
+					if (temp = start) {
+						if (start->next) {
+							start = start->next;
+						} else {
+							start = NULL; //deleteing the start
+						}
+					}
+					if (temp = end) {
+						end = NULL; //deleting the head
+					}
 					delete temp;
 				}
 			}
@@ -70,6 +73,7 @@ public:
 	}
 
 	void clear() {
+		end = NULL;
 		if (start) {
 			node<T>* n = start;
 			while (n->next) {
@@ -88,6 +92,9 @@ public:
 			} else {
 				n->next = new node();
 				end = n->next;
+			}
+			if (i == newSize) {
+				end = n; //handles shortening the list
 			}
 		}
 		while (n->next) {

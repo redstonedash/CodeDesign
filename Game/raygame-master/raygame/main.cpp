@@ -159,20 +159,20 @@ void LoadLevelOne() {
 }
 
 void LoadLevelTwo() {
-	player.spawnPoint = { 0,200,0 };
+	player.spawnPoint = { 0,18,0 };
 	player.camera.position = player.spawnPoint;
-	objectPool.at(0).enablePlatform("resources/models/MAPPART_1_01.obj");
-	objectPool.at(1).enablePlatform("resources/models/MAPPART_1_02.obj");
-	objectPool.at(2).enablePlatform("resources/models/MAPPART_1_03.obj");
-	objectPool.at(3).enablePlatform("resources/models/MAPPART_1_04.obj");
-	objectPool.at(4).enablePlatform("resources/models/MAPPART_1_05.obj");
-	objectPool.at(5).enablePlatform("resources/models/MAPPART_1_06.obj");
-	objectPool.at(6).enablePlatform("resources/models/MAPPART_1_07.obj");
-	objectPool.at(7).enablePlatform("resources/models/MAPPART_1_08.obj");
-	objectPool.at(8).enablePlatform("resources/models/MAPPART_1_09.obj");
-	objectPool.at(8).goal = true;
-	objectPool.at(9).enablePlatform("resources/models/MAPPART_1_10.obj");
-	objectPool.at(9).goal = true;
+	objectPool.at(0).enablePlatform("resources/models/ADVANCE_01.obj");
+	objectPool.at(1).enablePlatform("resources/models/ADVANCE_02.obj");
+	objectPool.at(2).enablePlatform("resources/models/ADVANCE_03.obj");
+	objectPool.at(3).enablePlatform("resources/models/ADVANCE_04.obj");
+	objectPool.at(4).enablePlatform("resources/models/ADVANCE_05.obj");
+	objectPool.at(5).enablePlatform("resources/models/ADVANCE_06.obj");
+	objectPool.at(6).enablePlatform("resources/models/ADVANCE_07.obj");
+	objectPool.at(7).enablePlatform("resources/models/ADVANCE_08.obj");
+	objectPool.at(8).enablePlatform("resources/models/ADVANCE_09.obj");
+	objectPool.at(9).enablePlatform("resources/models/ADVANCE_10.obj");
+	objectPool.at(9).enablePlatform("resources/models/ADVANCE_11.obj");
+	objectPool.at(10).goal = true;
 }
 
 void ClearObjectPool() {
